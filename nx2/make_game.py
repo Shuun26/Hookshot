@@ -25,6 +25,8 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)   # (python -I leaves the script folder off)
+import build_priority
 PY = [sys.executable, "-I", "-u", "-X", "utf8"]   # (utf8: every step's output in UTF-8 whatever the console's code page: lift.py crashed on a letter, #180)   # (-u: the steps' output as it comes, not in 8 KB blocks minutes apart)
 BUILD_ID = "e0f3ccfa"   # (the version the patches, the hot list and the profile were made from)
 LINUX = os.name != "nt"
@@ -89,7 +91,7 @@ def run(cmd, env=None, on_line=None):
     e = dict(os.environ, PYTHONIOENCODING="utf-8")
     e.update(env or {})
     p = subprocess.Popen(cmd, cwd=ROOT, env=e, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8",
-                         errors="replace", bufsize=1)
+                         errors="replace", bufsize=1, **build_priority.popen_kwargs())
     no_throttle(getattr(p, "_handle", None))
     lines = []
     for line in p.stdout:
@@ -463,14 +465,18 @@ def main():
     p.add_argument("--out")
     p.add_argument("--work", default=os.path.join(os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache"), "hookshot-builder")
                    if LINUX else os.path.join(os.environ.get("LOCALAPPDATA", ROOT), "HookshotBuilder"))
-    # (HOOKSHOT_JOBS: fewer compilers on a PC short of memory; the AppImage's builds pass no --jobs)
-    p.add_argument("--jobs", type=int, default=int(os.environ.get("HOOKSHOT_JOBS") or 0) or max(1, (os.cpu_count() or 2) // 2))
+    # (HOOKSHOT_JOBS: fewer compilers on a PC short of memory; the AppImage's builds pass no --jobs. Unset: one per logical CPU, as
+    # many as the free memory holds, build_priority.default_jobs. Half the CPUs, as before, left the fast cores of hybrid CPUs idle)
+    p.add_argument("--jobs", type=int, default=int(os.environ.get("HOOKSHOT_JOBS") or 0) or None)
+    # (HOOKSHOT_PRIORITY: normal by default, the build at full speed; low for using the PC meanwhile; never realtime. build_priority.py)
+    p.add_argument("--priority", choices=build_priority.LEVELS + ("realtime",), default=None)
     p.add_argument("--language", default="en-US", help="the game's language: a code from LANGUAGES, written to language.txt")
     p.add_argument("--check", action="store_true")
     p.add_argument("--update", help="a game folder built before: built again from the game files it keeps (the game's update offer)")
     a = p.parse_args()
     os.makedirs(a.work, exist_ok=True)
     no_throttle()
+    priority = build_priority.apply_to_self(a.priority)
     if os.name == "nt":   # (the PC kept awake while this runs: a build is 45 minutes, and sleep stopped it)
         import ctypes
         ctypes.WinDLL("kernel32").SetThreadExecutionState(0x80000000 | 0x00000001)
@@ -578,6 +584,9 @@ def main():
         elif re.match(r"\s+\S+\s+\d+ MB\s+\d+s", line):
             done["n"] += 1
             say("progress", "%.3f" % (done["n"] / done["of"]))
+    if not a.jobs:   # (counted now, after the lift: the free memory the compilers will have)
+        a.jobs = build_priority.default_jobs()
+    print("compiling with %d jobs at %s priority (HOOKSHOT_JOBS and HOOKSHOT_PRIORITY change them)" % (a.jobs, priority), flush=True)
     run(PY + ["nx2/build.py", "--standalone", "--jobs", str(a.jobs)], env, compiled)
 
     say("stage", "finish", "Putting the game folder together")
@@ -590,7 +599,7 @@ def main():
     shutil.copy2(os.path.join(work, "sa", "image", "image.bin"), os.path.join(out, "image.bin"))
     # every shader of the game, for its first start to translate (gpu/vk/vk_shader.cpp seed_open). Without it the game still runs, compiling them
     # as it meets them: not worth stopping a finished build for
-    if subprocess.call(shader_census_cmd(romfs, os.path.join(out, "hookshot_shaders.bin")), stdout=sys.stderr):
+    if subprocess.call(shader_census_cmd(romfs, os.path.join(out, "hookshot_shaders.bin")), stdout=sys.stderr, **build_priority.popen_kwargs()):
         print("the shader list was not made: the game will compile its shaders as it plays", flush=True)
     seed_pipelines(out)
     language = os.path.join(out, "language.txt")   # (the same text as host/nn_applet.c writes)
