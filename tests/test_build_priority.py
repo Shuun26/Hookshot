@@ -75,6 +75,21 @@ class SourceTests(unittest.TestCase):
         runner = (ROOT / "builder" / "HookshotBuilder" / "Runner.cs").read_text(encoding="utf-8")
         self.assertNotIn("ProcessPriorityClass.BelowNormal;", runner)
 
+    def test_builder_passes_the_chosen_speed(self):
+        window = (ROOT / "builder" / "HookshotBuilder" / "MainWindow.xaml.cs").read_text(encoding="utf-8")
+        self.assertIn('"--priority"', window)
+        self.assertIn('{ "high", "normal", "low" }', window)
+
+    def test_every_language_names_the_speeds(self):
+        import re
+        strings = (ROOT / "builder" / "HookshotBuilder" / "Strings.cs").read_text(encoding="utf-8")
+        enum = strings[strings.index("enum S"):strings.index("}", strings.index("enum S"))]
+        names = re.findall(r"\b([A-Z]\w*)\b", re.sub(r"//[^\n]*", "", enum[enum.index("{"):]))
+        needed = names.index("SpeedLow") + 1
+        for name, body in re.findall(r"static readonly string\[\] (\w+) =\n    \{\n(.*?)\n    \};", strings, re.S):
+            with self.subTest(language=name):
+                self.assertGreaterEqual(len(re.findall(r'"[^"]*"', body)), needed)
+
     def test_compilers_are_started_at_the_level(self):
         build = (ROOT / "nx2" / "build.py").read_text(encoding="utf-8")
         start = build.index("def compile_one")

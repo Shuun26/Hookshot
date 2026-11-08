@@ -19,6 +19,8 @@ on:
       - nx2/build_priority.py
       - nx2/build.py
       - builder/HookshotBuilder/Runner.cs
+      - builder/HookshotBuilder/MainWindow.xaml.cs
+      - builder/HookshotBuilder/Strings.cs
       - tests/test_build_priority.py
       - tests/test_import_hold.py
       - gpu/vk/vk_replay.cpp
@@ -93,6 +95,8 @@ on:
       - nx2/build_priority.py
       - nx2/build.py
       - builder/HookshotBuilder/Runner.cs
+      - builder/HookshotBuilder/MainWindow.xaml.cs
+      - builder/HookshotBuilder/Strings.cs
       - tests/test_build_priority.py
       - tests/test_import_hold.py
       - gpu/vk/vk_replay.cpp

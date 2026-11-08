@@ -47,6 +47,9 @@ public partial class MainWindow : Window
         Loaded += (_, _) => Updater.FromCommandLine(this);
     }
 
+    /// The speed box's choices, as make_game.py --priority takes them (nx2/build_priority.py): High, Normal, Low
+    static readonly string[] Priorities = { "high", "normal", "low" };
+
     void LanguageChanged(object sender, SelectionChangedEventArgs e)
     {
         if (LanguageBox.SelectedItem is Language l) { lang = l; ApplyLanguage(); }
@@ -62,6 +65,10 @@ public partial class MainWindow : Window
         UseFolders.Content = T(S.Folders);
         BrowseA.Content = BrowseB.Content = BrowseC.Content = BrowseD.Content = T(S.Browse);
         SaveToLabel.Text = T(S.SaveTo);
+        SpeedLabel.Text = T(S.SpeedLabel);
+        var speed = SpeedBox.SelectedIndex < 0 ? 1 : SpeedBox.SelectedIndex;   // (Normal by default; kept across language changes)
+        SpeedBox.ItemsSource = new[] { T(S.SpeedHigh), T(S.SpeedNormal), T(S.SpeedLow) };
+        SpeedBox.SelectedIndex = speed;
         BuildButton.Content = T(S.Build);
         ShowLog.Content = T(ShowLog.IsChecked == true ? S.HideDetails : S.ShowDetails);
         CancelButton.Content = T(S.Cancel);
@@ -187,6 +194,7 @@ public partial class MainWindow : Window
         if (UseNup.IsChecked == true) args.AddRange(new[] { "--nup", NupPath.Text });
         else args.AddRange(new[] { "--romfs", RomfsPath.Text, "--exefs", ExefsPath.Text });
         args.AddRange(new[] { "--out", OutPath.Text, "--language", lang.Code });
+        args.AddRange(new[] { "--priority", Priorities[Math.Clamp(SpeedBox.SelectedIndex, 0, 2)] });
         Run(tools, args);
     }
 

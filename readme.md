@@ -81,11 +81,16 @@ Add `--check` with your `.nup` or `--exefs` to only check the game's version. It
 
 A build takes about 40 minutes, and you can use your PC in the meantime.
 
-The build uses the whole CPU at normal priority, with one compiler per CPU thread (fewer if memory is short). There is no
-need to raise its priority in Task Manager, and Realtime is never a good idea: it can freeze the mouse and keyboard. To
-keep the PC quicker for something else while it builds, set `HOOKSHOT_PRIORITY=low` (slower, much slower on Intel CPUs
-with efficiency cores). `HOOKSHOT_JOBS` sets how many files compile at once. Both work with the builder and the command
-line (`--priority`, `--jobs`).
+The builder's **Build speed** choice sets how much of the PC the build takes, with one compiler per CPU thread (fewer if
+memory is short):
+
+- **Normal** (the default): fast, and the PC stays usable.
+- **High**: the fastest; other programs may feel slow meanwhile.
+- **Low**: the slowest (much slower on Intel CPUs with efficiency cores), for using the PC while it builds.
+
+There is no need to raise the build's priority in Task Manager, and Realtime is never a good idea: it can freeze the mouse
+and keyboard. On the command line the same choice is `--priority high|normal|low` (or `HOOKSHOT_PRIORITY`), and
+`--jobs` (or `HOOKSHOT_JOBS`) sets how many files compile at once.
 
 ### On Linux
 

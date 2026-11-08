@@ -13,6 +13,8 @@ enum S
     Subtitle, GameFiles, Nup, Folders, DropHint, SaveTo, Build, Browse, Needs, Free, Checking, VersionOk, VersionBad, ToolsMissing, PythonMissing,
     Building, Patience, Elapsed, Read, Lift, Compile, Finish, ShowDetails, HideDetails, Cancel, Back, OpenFolder, Play, Ready, BuiltIn,
     Stopped, Cancelled, CancelledNote, CloseQuestion, LanguageLabel,
+    // (how much of the CPU the build takes: make_game.py --priority, nx2/build_priority.py)
+    SpeedLabel, SpeedHigh, SpeedNormal, SpeedLow,
     // (the update, English only for now: Strings.Text falls back to it)
     Download, Updating, UpdateFailed,
 }
@@ -28,6 +30,7 @@ static class Strings
         "Building", "This takes a while, and your PC stays usable.", "Elapsed", "Reading your game files", "Translating the game to PC code", "Compiling",
         "Putting the game folder together", "Show details", "Hide details", "Cancel", "Back", "Open folder", "Play", "Your game is ready", "built in",
         "The build stopped", "Build cancelled", "You can start again from the same folder.", "Stop the build and close?", "Language",
+        "Build speed", "High: fastest, the PC may feel slow", "Normal: fast, the PC stays usable", "Low: slowest, for using the PC meanwhile",
         "Downloading the new version", "Updating your game", "The update could not be downloaded",
     };
     static readonly string[] Fr =
@@ -39,6 +42,7 @@ static class Strings
         "Création en cours", "Cela prend du temps, et votre PC reste utilisable.", "Temps écoulé", "Lecture de vos fichiers de jeu", "Traduction du jeu en code PC", "Compilation",
         "Assemblage du dossier du jeu", "Afficher les détails", "Masquer les détails", "Annuler", "Retour", "Ouvrir le dossier", "Jouer", "Votre jeu est prêt", "créé en",
         "La création s'est arrêtée", "Création annulée", "Vous pouvez recommencer depuis le même dossier.", "Arrêter la création et fermer ?", "Langue",
+        "Vitesse de création", "Haute : la plus rapide, le PC peut ralentir", "Normale : rapide, le PC reste utilisable", "Basse : plus lente, pour utiliser le PC en même temps",
     };
     static readonly string[] De =
     {
@@ -49,6 +53,7 @@ static class Strings
         "Wird erstellt", "Das dauert eine Weile, dein PC bleibt nutzbar.", "Vergangen", "Spieldateien werden gelesen", "Spiel wird in PC-Code übersetzt", "Kompilieren",
         "Spielordner wird zusammengestellt", "Details anzeigen", "Details ausblenden", "Abbrechen", "Zurück", "Ordner öffnen", "Spielen", "Dein Spiel ist fertig", "erstellt in",
         "Die Erstellung wurde angehalten", "Erstellung abgebrochen", "Du kannst im selben Ordner neu beginnen.", "Erstellung beenden und schließen?", "Sprache",
+        "Erstellungsgeschwindigkeit", "Hoch: am schnellsten, der PC kann träge werden", "Normal: schnell, der PC bleibt nutzbar", "Niedrig: am langsamsten, um den PC nebenbei zu nutzen",
     };
     static readonly string[] It =
     {
@@ -59,6 +64,7 @@ static class Strings
         "Creazione in corso", "Ci vuole un po', e il PC resta utilizzabile.", "Trascorso", "Lettura dei file di gioco", "Traduzione del gioco in codice PC", "Compilazione",
         "Assemblaggio della cartella di gioco", "Mostra dettagli", "Nascondi dettagli", "Annulla", "Indietro", "Apri cartella", "Gioca", "Il tuo gioco è pronto", "creato in",
         "La creazione si è interrotta", "Creazione annullata", "Puoi ricominciare dalla stessa cartella.", "Interrompere la creazione e chiudere?", "Lingua",
+        "Velocità di creazione", "Alta: la più veloce, il PC può rallentare", "Normale: veloce, il PC resta utilizzabile", "Bassa: più lenta, per usare il PC nel frattempo",
     };
     static readonly string[] Es =
     {
@@ -69,6 +75,7 @@ static class Strings
         "Creando", "Tarda un rato, y tu PC sigue siendo utilizable.", "Transcurrido", "Leyendo tus archivos del juego", "Traduciendo el juego a código de PC", "Compilando",
         "Preparando la carpeta del juego", "Mostrar detalles", "Ocultar detalles", "Cancelar", "Atrás", "Abrir carpeta", "Jugar", "Tu juego está listo", "creado en",
         "La creación se detuvo", "Creación cancelada", "Puedes empezar de nuevo desde la misma carpeta.", "¿Detener la creación y cerrar?", "Idioma",
+        "Velocidad de compilación", "Alta: lo más rápido, el PC puede ir lento", "Normal: rápida, el PC sigue usable", "Baja: más lenta, para usar el PC mientras tanto",
     };
     static readonly string[] Pt =
     {
@@ -79,6 +86,7 @@ static class Strings
         "Criando", "Isso leva um tempo, e seu PC continua utilizável.", "Decorrido", "Lendo seus arquivos do jogo", "Traduzindo o jogo para código de PC", "Compilando",
         "Montando a pasta do jogo", "Mostrar detalhes", "Ocultar detalhes", "Cancelar", "Voltar", "Abrir pasta", "Jogar", "Seu jogo está pronto", "criado em",
         "A criação parou", "Criação cancelada", "Você pode recomeçar a partir da mesma pasta.", "Parar a criação e fechar?", "Idioma",
+        "Velocidade de criação", "Alta: a mais rápida, o PC pode ficar lento", "Normal: rápida, o PC continua utilizável", "Baixa: mais lenta, para usar o PC enquanto isso",
     };
     static readonly string[] Nl =
     {
@@ -89,6 +97,7 @@ static class Strings
         "Bezig met maken", "Dit duurt even, en je pc blijft bruikbaar.", "Verstreken", "Je spelbestanden lezen", "Spel vertalen naar pc-code", "Compileren",
         "Spelmap samenstellen", "Details tonen", "Details verbergen", "Annuleren", "Terug", "Map openen", "Spelen", "Je spel is klaar", "gemaakt in",
         "Het maken is gestopt", "Maken geannuleerd", "Je kunt opnieuw beginnen vanuit dezelfde map.", "Maken stoppen en sluiten?", "Taal",
+        "Bouwsnelheid", "Hoog: snelst, de pc kan traag aanvoelen", "Normaal: snel, de pc blijft bruikbaar", "Laag: langzaamst, om de pc ondertussen te gebruiken",
     };
     static readonly string[] Pl =
     {
@@ -99,6 +108,7 @@ static class Strings
         "Tworzenie", "To chwilę potrwa, a komputer pozostanie w użyciu.", "Upłynęło", "Odczytywanie plików gry", "Tłumaczenie gry na kod PC", "Kompilowanie",
         "Składanie folderu gry", "Pokaż szczegóły", "Ukryj szczegóły", "Anuluj", "Wstecz", "Otwórz folder", "Graj", "Twoja gra jest gotowa", "utworzono w",
         "Tworzenie zostało przerwane", "Anulowano tworzenie", "Możesz zacząć ponownie z tego samego folderu.", "Przerwać tworzenie i zamknąć?", "Język",
+        "Szybkość tworzenia", "Wysoka: najszybciej, komputer może zwolnić", "Normalna: szybko, komputer pozostaje używalny", "Niska: najwolniej, aby w tym czasie korzystać z komputera",
     };
     static readonly string[] Ru =
     {
@@ -109,6 +119,7 @@ static class Strings
         "Сборка", "Это займёт время, а компьютером можно пользоваться.", "Прошло", "Чтение файлов игры", "Перевод игры в код для ПК", "Компиляция",
         "Подготовка папки с игрой", "Показать подробности", "Скрыть подробности", "Отмена", "Назад", "Открыть папку", "Играть", "Ваша игра готова", "собрано за",
         "Сборка остановлена", "Сборка отменена", "Можно начать заново из той же папки.", "Остановить сборку и закрыть?", "Язык",
+        "Скорость сборки", "Высокая: быстрее всего, ПК может тормозить", "Обычная: быстро, ПК остаётся удобным", "Низкая: медленнее всего, чтобы пользоваться ПК",
     };
     static readonly string[] Ja =
     {
@@ -119,6 +130,7 @@ static class Strings
         "ビルド中", "時間がかかりますが、PC はそのまま使えます。", "経過時間", "ゲームファイルを読み込んでいます", "ゲームを PC 用コードに変換しています", "コンパイル中",
         "ゲームフォルダーを作成しています", "詳細を表示", "詳細を隠す", "キャンセル", "戻る", "フォルダーを開く", "プレイ", "ゲームの準備ができました", "所要時間",
         "ビルドが停止しました", "ビルドをキャンセルしました", "同じフォルダーからやり直せます。", "ビルドを中止して閉じますか?", "言語",
+        "作成速度", "高: 最速、PCの動作が重くなることがあります", "標準: 高速、PCは普通に使えます", "低: 最も遅い、作成中もPCを使う場合に",
     };
     static readonly string[] Ko =
     {
@@ -129,6 +141,7 @@ static class Strings
         "빌드 중", "시간이 걸리지만 PC는 계속 사용할 수 있습니다.", "경과 시간", "게임 파일을 읽는 중", "게임을 PC 코드로 변환하는 중", "컴파일 중",
         "게임 폴더를 만드는 중", "자세히 보기", "자세히 숨기기", "취소", "뒤로", "폴더 열기", "플레이", "게임이 준비되었습니다", "소요 시간",
         "빌드가 중단되었습니다", "빌드가 취소되었습니다", "같은 폴더에서 다시 시작할 수 있습니다.", "빌드를 중단하고 닫을까요?", "언어",
+        "빌드 속도", "높음: 가장 빠름, PC가 느려질 수 있음", "보통: 빠름, PC를 계속 사용할 수 있음", "낮음: 가장 느림, 빌드 중 PC를 사용할 때",
     };
     static readonly string[] ZhHans =
     {
@@ -139,6 +152,7 @@ static class Strings
         "正在生成", "这需要一些时间,期间电脑仍可正常使用。", "已用时间", "正在读取游戏文件", "正在将游戏转换为电脑代码", "正在编译",
         "正在整理游戏文件夹", "显示详细信息", "隐藏详细信息", "取消", "返回", "打开文件夹", "开始游戏", "你的游戏已准备就绪", "用时",
         "生成已停止", "生成已取消", "你可以从同一文件夹重新开始。", "要停止生成并关闭吗?", "语言",
+        "生成速度", "高:最快,电脑可能变慢", "正常:较快,电脑仍可正常使用", "低:最慢,便于生成时使用电脑",
     };
     static readonly string[] ZhHant =
     {
@@ -149,6 +163,7 @@ static class Strings
         "正在建置", "這需要一些時間,期間電腦仍可正常使用。", "已用時間", "正在讀取遊戲檔案", "正在將遊戲轉換為電腦程式碼", "正在編譯",
         "正在整理遊戲資料夾", "顯示詳細資訊", "隱藏詳細資訊", "取消", "返回", "開啟資料夾", "開始遊戲", "你的遊戲已準備就緒", "用時",
         "建置已停止", "建置已取消", "你可以從同一資料夾重新開始。", "要停止建置並關閉嗎?", "語言",
+        "建置速度", "高:最快,電腦可能變慢", "正常:較快,電腦仍可正常使用", "低:最慢,方便建置時使用電腦",
     };
 
     public static readonly Language[] All =

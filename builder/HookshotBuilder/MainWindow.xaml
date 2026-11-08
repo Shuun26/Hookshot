@@ -82,6 +82,10 @@
           <TextBox x:Name="OutPath" Style="{StaticResource Path}" TextChanged="PathsChanged"/>
           <Button x:Name="BrowseD" Grid.Column="1" Style="{StaticResource Quiet}" Margin="8,0,0,0" Click="BrowseOut"/>
         </Grid>
+
+        <!-- How much of the CPU the build takes (make_game.py's priority option): Normal by default -->
+        <TextBlock x:Name="SpeedLabel" Style="{StaticResource Label}" Margin="0,24,0,8"/>
+        <ComboBox x:Name="SpeedBox" Style="{StaticResource Choice}" HorizontalAlignment="Stretch" AutomationProperties.Name="Build speed"/>
       </StackPanel>
 
       <Grid Grid.Row="2">
